@@ -4,7 +4,7 @@ class Task
 private:
 	int parent = 0, processTime = 0;
 public:
-	Task(int, int[12]);
+	Task(int, int);
 	~Task();
 };
 
