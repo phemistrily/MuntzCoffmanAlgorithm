@@ -31,6 +31,17 @@ void Task::getAllChildrens() {
 	cout << endl;
 }
 
-void Task::calculateLevels() {
-	cout << "Zaczynamy obliczanie poziomu:" << endl;
+void Task::calculateLevels(int i) {
+	/*cout << "Zaczynamy obliczanie poziomu:" << endl;
+	if (childrens.size() > 0) {
+		for (int i : childrens) {
+			calculateLevels(i);
+		}
+		int maxChildresn
+		
+
+	}
+	else {
+		this->taskLevel = this->processTime;
+	}*/
 }
