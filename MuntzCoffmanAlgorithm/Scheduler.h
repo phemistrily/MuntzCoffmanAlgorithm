@@ -10,6 +10,7 @@ public:
 	void calculateLevels(int taskId);
 	int findMaxLevelOfChildrens(int taskId);
 	void getTaskLevel(int taskId);
+	void getNextTimeFromTimeline();
 	~Scheduler();
 };
 

@@ -66,7 +66,13 @@ int Scheduler::findMaxLevelOfChildrens(int taskId) {
 
 void Scheduler::getTaskLevel(int taskId) {
 	cout << "Poziom zadania " << taskId << " wynosi: ";
-	cout << this->TaskArray[taskId]->taskLevel << endl;
+	cout << this->TaskArray[taskId]->taskLevel;
+	cout << " Zadanie bedzie wykonywane przez: ";
+	cout << this->TaskArray[taskId]->processTime << endl;
+}
+
+void Scheduler::getNextTimeFromTimeline() {
+	//
 }
 
 Scheduler::~Scheduler()
