@@ -1,4 +1,5 @@
 #include "Scheduler.h"
+#include "Task.h"
 #include <iostream>
 using namespace std;
 
@@ -9,12 +10,19 @@ Scheduler::Scheduler(int dependencyArray[12][12],double timesOfProcess[12],int c
 	this->cpuNumber = cpus;
 
 	for (int i = 0; i < 12; i++) {
-		this->tasks[i] = new Task(i, timesOfProcess[i]);
+		TaskArray[i] = new Task(i, timesOfProcess[i]);
 	}
+
+
 }
 
 
 Scheduler::~Scheduler()
 {
+	for (int i = 0; i < 12; ++i)
+	{
+		delete[] TaskArray[i];
+	}
+	delete[] TaskArray;
 	cout << "closed" << endl;
 }
