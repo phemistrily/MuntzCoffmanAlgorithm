@@ -15,19 +15,19 @@ Scheduler::Scheduler(int dependencyArray[12][12],double timesOfProcess[12],int c
 
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 12; j++) {
-			cout << dependencyArray[i][j];
+			//cout << dependencyArray[i][j];
 			if (dependencyArray[i][j] > 0) {
 				this->TaskArray[i]->addChildren(j);
 			}
 		}
-		cout << endl;
+		//cout << endl;
 	}
 	
 	for (int i = 0; i < 12; i++)
 	{
 		this->TaskArray[i]->getAllChildrens();
 	}
-
+	cout << "Zaczynamy obliczanie poziomow dla zadan:" << endl;
 	for (int i = 0; i < 12; i++) {
 		this->calculateLevels(i);
 	}
@@ -38,7 +38,7 @@ Scheduler::Scheduler(int dependencyArray[12][12],double timesOfProcess[12],int c
 }
 
 void Scheduler::calculateLevels(int taskId) {
-	cout << "Zaczynamy obliczanie poziomu:" << endl;
+	//cout << "Zaczynamy obliczanie poziomu:" << endl;
 	int childrensSize = this->TaskArray[taskId]->childrens.size();
 	if (childrensSize > 0) {
 		for (int i : this->TaskArray[taskId]->childrens) {
@@ -60,12 +60,12 @@ int Scheduler::findMaxLevelOfChildrens(int taskId) {
 			maxLevel = this->TaskArray[i]->taskLevel;
 		}
 	}
-	cout << "maxLevel: " << maxLevel << endl;
+	//cout << "maxLevel: " << maxLevel << endl;
 	return maxLevel;
 }
 
 void Scheduler::getTaskLevel(int taskId) {
-	cout << "Level taska " << taskId << " wynosi: " << endl;
+	cout << "Poziom zadania " << taskId << " wynosi: ";
 	cout << this->TaskArray[taskId]->taskLevel << endl;
 }
 

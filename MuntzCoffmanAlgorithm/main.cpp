@@ -22,7 +22,7 @@ int main() {
 		{0,0,0,0,0,0,0,0,0,0,0,0}
 	};
 	double timeOfTask[12] = { 3,6,7,2,3,7,2,3,11,9,7,4 };
-
+	cout << "Zadania liczone sa od 0, w notacji amerykanskiej" << endl;
 	Scheduler *sched = new Scheduler(dependencyArray, timeOfTask, cpus);
 
 	cout << endl;
