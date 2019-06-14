@@ -8,6 +8,7 @@ Scheduler::Scheduler(int dependencyArray[12][12],double timesOfProcess[12],int c
 {
 	this->idleCpus = cpus;
 	this->cpuNumber = cpus;
+	this->time = 0;
 
 	for (int i = 0; i < 12; i++) {
 		this->TaskArray[i] = new Task(i, timesOfProcess[i]);
@@ -18,6 +19,7 @@ Scheduler::Scheduler(int dependencyArray[12][12],double timesOfProcess[12],int c
 			//cout << dependencyArray[i][j];
 			if (dependencyArray[i][j] > 0) {
 				this->TaskArray[i]->addChildren(j);
+				this->TaskArray[j]->addParent(i);
 			}
 		}
 		//cout << endl;
@@ -83,4 +85,87 @@ Scheduler::~Scheduler()
 	}
 	delete[] TaskArray;
 	cout << "closed" << endl;
+}
+
+void Scheduler::sortTasks()
+{
+	int i, j;
+	cout << " blah 1 ";
+	for (i = 0; i < 12; i++)
+	{
+		cout << TaskArray[i]->taskLevel << " ";
+	}
+	cout << endl;
+
+	for (i = 11; i > 0; i--)
+	{
+		for (j = 11; j > 0 + 11 - i; j--)
+		{
+
+			double a = TaskArray[j]->taskLevel;
+			double b = TaskArray[j - 1]->taskLevel;
+
+			if (a > b || TaskArray[j - 1]->isDone() || TaskArray[j - 1]->isBlocked())
+			{
+				Task temp = *TaskArray[j];
+				*TaskArray[j] = *TaskArray[j - 1];
+				*TaskArray[j - 1] = temp;
+			}
+		}
+	}
+
+	for (i = 0; i < 12; i++)
+	{
+		cout << TaskArray[i]->taskLevel << " ";
+	}
+	cout << endl;
+
+}
+
+
+void Scheduler::next() {
+
+	this->sortTasks();
+
+	vector<Task> current;
+	current.clear();
+
+	// TODO: Collect process with the highest priority
+	current.push_back(*TaskArray[0]);
+	--idleCpus;
+	int i = 1;
+	while (i < 12 && !TaskArray[i]->isDone() && (TaskArray[i]->taskLevel == current[i - 1].taskLevel || idleCpus > 0)) {
+		current.push_back(*TaskArray[i]); // add top priority task
+		--idleCpus;
+		++i;
+	}
+
+	cout << time << ": ";
+
+	double beta = ((double)cpuNumber) / current.size();
+	for (Task t : current) {
+		if (!t.isDone())
+		{
+			cout << t.taskId;
+			t.execute(beta);
+			if (t.isDone()) {
+				vector <int> hisChildrens = t.getHisChildrens();
+				for (int s : hisChildrens) {
+					Task temp = *TaskArray[s];
+					temp.deleteParent(t.taskId);
+				}
+				this->doneTasks++;
+				cout << "* ";
+				continue;
+			}
+			else
+			{
+				cout << " ";
+			}
+		}
+	}
+
+	idleCpus = cpuNumber;
+	++time;
+	cout << endl;
 }

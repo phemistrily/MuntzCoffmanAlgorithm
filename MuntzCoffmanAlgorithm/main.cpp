@@ -25,7 +25,10 @@ int main() {
 	cout << "Zadania liczone sa od 0, w notacji amerykanskiej" << endl;
 	Scheduler *sched = new Scheduler(dependencyArray, timeOfTask, cpus);
 
-	sched->getNextTimeFromTimeline();
+	sched->next();
+	while (sched->doneTasks != 12) {
+		sched->next();
+	}
 	cout << endl;
 	system("PAUSE");
 	return 0;
