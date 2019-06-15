@@ -127,15 +127,15 @@ void Scheduler::next() {
 
 	this->sortTasks();
 
-	vector<Task> current;
+	vector<Task*> current;
 	current.clear();
 
 	// TODO: Collect process with the highest priority
-	current.push_back(*TaskArray[0]);
+	current.push_back(TaskArray[0]);
 	--idleCpus;
 	int i = 1;
-	while (i < 12 && !TaskArray[i]->isDone() && (TaskArray[i]->taskLevel == current[i - 1].taskLevel || idleCpus > 0)) {
-		current.push_back(*TaskArray[i]); // add top priority task
+	while (i < 12 && !TaskArray[i]->isDone() && (TaskArray[i]->taskLevel == current[i - 1]->taskLevel || idleCpus > 0)) {
+		current.push_back(TaskArray[i]); // add top priority task
 		--idleCpus;
 		++i;
 	}
@@ -143,16 +143,16 @@ void Scheduler::next() {
 	cout << time << ": ";
 
 	double beta = ((double)cpuNumber) / current.size();
-	for (Task t : current) {
-		if (!t.isDone())
+	for (Task* t : current) {
+		if (!t->isDone())
 		{
-			cout << t.taskId;
-			t.execute(beta);
-			if (t.isDone()) {
-				vector <int> hisChildrens = t.getHisChildrens();
+			cout << t->taskId;
+			t->execute(beta);
+			if (t->isDone()) {
+				vector <int> hisChildrens = t->getHisChildrens();
 				for (int s : hisChildrens) {
 					Task temp = *TaskArray[s];
-					temp.deleteParent(t.taskId);
+					temp.deleteParent(t->taskId);
 				}
 				this->doneTasks++;
 				cout << "* ";
