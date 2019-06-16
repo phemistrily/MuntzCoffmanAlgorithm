@@ -1,10 +1,11 @@
 #pragma once
 #include "Task.h"
+#include <vector.>
 class Scheduler
 {
 private:
 	int time, cpuNumber, idleCpus;
-	Task** TaskArray = new Task*[12];
+	std::vector<Task*> TaskArray;
 public:
 	int doneTasks = 0;
 	Scheduler(int dependencyArray[12][12], double timesOfProcess[12], int cpus);
@@ -15,6 +16,5 @@ public:
 	~Scheduler();
 	void sortTasks();
 	void next();
+	void printTasks();
 };
-
-

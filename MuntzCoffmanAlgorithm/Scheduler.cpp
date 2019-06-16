@@ -3,15 +3,50 @@
 #include <iostream>
 using namespace std;
 
+void Scheduler::printTasks()
+{
 
-Scheduler::Scheduler(int dependencyArray[12][12],double timesOfProcess[12],int cpus)
+	for (int i = 0; i < 12; i++)
+	{
+		cout << endl << "Task: " << TaskArray[i]->taskId + 1 << endl;
+		cout << "children: ";
+		for (int j = 0; j < TaskArray[i]->childrens.size(); j++)
+		{
+			cout << TaskArray[i]->childrens[j] + 1 << " ";
+		}
+
+		cout << endl << "parents: ";
+
+		for (int j = 0; j < TaskArray[i]->parents.size(); j++)
+		{
+			cout << TaskArray[i]->parents[j] + 1 << " ";
+		}
+	}
+
+	/*
+		for (int i = 0; i < 12; i++)
+		{
+			cout << endl << "Task: " << TaskArray[i]->taskId << " (" << TaskArray[i]->taskLevel << ")";
+			if (TaskArray[i]->isDone())
+			{
+				cout << "*";
+			}
+			if (TaskArray[i]->isBlocked())
+			{
+				cout << "#";
+			}
+		}
+		*/
+}
+
+Scheduler::Scheduler(int dependencyArray[12][12], double timesOfProcess[12], int cpus)
 {
 	this->idleCpus = cpus;
 	this->cpuNumber = cpus;
 	this->time = 0;
 
 	for (int i = 0; i < 12; i++) {
-		this->TaskArray[i] = new Task(i, timesOfProcess[i]);
+		this->TaskArray.push_back(new Task(i, timesOfProcess[i]));
 	}
 
 	for (int i = 0; i < 12; i++) {
@@ -24,11 +59,14 @@ Scheduler::Scheduler(int dependencyArray[12][12],double timesOfProcess[12],int c
 		}
 		//cout << endl;
 	}
-	
+
 	for (int i = 0; i < 12; i++)
 	{
 		this->TaskArray[i]->getAllChildrens();
 	}
+
+	printTasks();
+
 	cout << "Zaczynamy obliczanie poziomow dla zadan:" << endl;
 	for (int i = 0; i < 12; i++) {
 		this->calculateLevels(i);
@@ -83,29 +121,21 @@ Scheduler::~Scheduler()
 	{
 		delete[] TaskArray[i];
 	}
-	delete[] TaskArray;
 	cout << "closed" << endl;
 }
 
 void Scheduler::sortTasks()
 {
 	int i, j;
-	cout << " blah 1 ";
-	for (i = 0; i < 12; i++)
-	{
-		cout << TaskArray[i]->taskLevel << " ";
-	}
-	cout << endl;
 
 	for (i = 11; i > 0; i--)
 	{
 		for (j = 11; j > 0 + 11 - i; j--)
 		{
-
 			double a = TaskArray[j]->taskLevel;
 			double b = TaskArray[j - 1]->taskLevel;
 
-			if (a > b || TaskArray[j - 1]->isDone() || TaskArray[j - 1]->isBlocked())
+			if (a > b)
 			{
 				Task temp = *TaskArray[j];
 				*TaskArray[j] = *TaskArray[j - 1];
@@ -114,12 +144,16 @@ void Scheduler::sortTasks()
 		}
 	}
 
-	for (i = 0; i < 12; i++)
+	for (i = 0, j = 0; i < 12 && j < 12; i++, j++)
 	{
-		cout << TaskArray[i]->taskLevel << " ";
+		if (TaskArray[i]->isBlocked() || TaskArray[i]->isDone())
+		{
+			Task* temp = TaskArray[i];
+			TaskArray.erase(TaskArray.begin() + i);
+			TaskArray.push_back(temp);
+			i--;
+		}
 	}
-	cout << endl;
-
 }
 
 
@@ -134,16 +168,20 @@ void Scheduler::next() {
 	current.push_back(TaskArray[0]);
 	--idleCpus;
 	int i = 1;
-	while (i < 12 && !TaskArray[i]->isDone() && (TaskArray[i]->taskLevel == current[i - 1]->taskLevel || idleCpus > 0)) {
+	while (i < 12 &&
+		(TaskArray[i]->taskLevel == current[i - 1]->taskLevel || idleCpus > 0)) {
 		current.push_back(TaskArray[i]); // add top priority task
 		--idleCpus;
 		++i;
 	}
 
+	//printTasks();
+
 	cout << time << ": ";
 
 	double beta = ((double)cpuNumber) / current.size();
 	for (Task* t : current) {
+
 		if (!t->isDone())
 		{
 			cout << t->taskId;
@@ -151,8 +189,12 @@ void Scheduler::next() {
 			if (t->isDone()) {
 				vector <int> hisChildrens = t->getHisChildrens();
 				for (int s : hisChildrens) {
-					Task temp = *TaskArray[s];
-					temp.deleteParent(t->taskId);
+					for (int u = 0; u < 12; u++)
+					{
+						if (s == TaskArray[u]->taskId)
+							TaskArray[u]->deleteParent(t->taskId);
+					}
+
 				}
 				this->doneTasks++;
 				cout << "* ";
@@ -164,6 +206,8 @@ void Scheduler::next() {
 			}
 		}
 	}
+
+	//printTasks();
 
 	idleCpus = cpuNumber;
 	++time;
