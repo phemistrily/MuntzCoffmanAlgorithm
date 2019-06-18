@@ -105,7 +105,7 @@ int Scheduler::findMaxLevelOfChildrens(int taskId) {
 }
 
 void Scheduler::getTaskLevel(int taskId) {
-	cout << "Poziom zadania " << taskId << " wynosi: ";
+	cout << "Poziom zadania " << taskId+1 << " wynosi: ";
 	cout << this->TaskArray[taskId]->taskLevel;
 	cout << " Zadanie bedzie wykonywane przez: ";
 	cout << this->TaskArray[taskId]->processTime << endl;
@@ -177,14 +177,14 @@ void Scheduler::next() {
 
 	//printTasks();
 
-	cout << time << ": ";
+	cout << "czas procesorow: " << time+1 << ": ";
 
 	double beta = ((double)cpuNumber) / current.size();
 	for (Task* t : current) {
 
 		if (!t->isDone())
 		{
-			cout << t->taskId;
+			cout << t->taskId+1;
 			t->execute(beta);
 			if (t->isDone()) {
 				vector <int> hisChildrens = t->getHisChildrens();
